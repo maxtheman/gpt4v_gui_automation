@@ -1,0 +1,24 @@
+{"type": "mouse", "x": 799.31640625, "y": 419.82421875, "button": "Button.left", "action": "press"}
+{"type": "mouse", "x": 799.31640625, "y": 419.82421875, "button": "Button.left", "action": "release"}
+{"type": "keyboard", "key": "'a'", "action": "press"}
+{"type": "keyboard", "key": "'s'", "action": "press"}
+{"type": "keyboard", "key": "'d'", "action": "press"}
+{"type": "keyboard", "key": "'a'", "action": "release"}
+{"type": "keyboard", "key": "'f'", "action": "press"}
+{"type": "keyboard", "key": "'s'", "action": "release"}
+{"type": "keyboard", "key": "'d'", "action": "release"}
+{"type": "keyboard", "key": "'f'", "action": "release"}
+{"type": "keyboard", "key": "Key.cmd", "action": "press"}
+{"type": "keyboard", "key": "'z'", "action": "press"}
+{"type": "keyboard", "key": "'z'", "action": "release"}
+{"type": "keyboard", "key": "Key.cmd", "action": "release"}
+{"type": "keyboard", "key": "Key.cmd", "action": "press"}
+{"type": "keyboard", "key": "'s'", "action": "press"}
+{"type": "keyboard", "key": "'s'", "action": "release"}
+{"type": "keyboard", "key": "Key.cmd", "action": "release"}
+{"type": "mouse", "x": 523.90234375, "y": 888.79296875, "button": "Button.left", "action": "press"}
+{"type": "mouse", "x": 523.90234375, "y": 888.79296875, "button": "Button.left", "action": "release"}
+{"type": "keyboard", "key": "Key.ctrl", "action": "press"}
+{"type": "keyboard", "key": "Key.ctrl", "action": "release"}
+{"type": "keyboard", "key": "Key.esc", "action": "press"}
+{"type": "keyboard", "key": "Key.esc", "action": "release"}

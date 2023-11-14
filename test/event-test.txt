@@ -1,0 +1,14 @@
+{"type": "mouse", "x": 628, "y": 730, "button": "Button.left", "action": "press"}
+{"type": "mouse", "x": 628, "y": 730, "button": "Button.left", "action": "release"}
+{"type": "keyboard", "key": "100", "action": "press"}
+{"type": "keyboard", "key": "100", "action": "release"}
+{"type": "mouse", "x": 730, "y": 730, "button": "Button.left", "action": "press"}
+{"type": "mouse", "x": 730, "y": 730, "button": "Button.left", "action": "release"}
+{"type": "mouse", "x": 375, "y": 105, "button": "Button.left", "action": "press"}
+{"type": "mouse", "x": 375, "y": 105, "button": "Button.left", "action": "release"}
+{"type": "mouse", "x": 1175, "y": 105, "button": "Button.left", "action": "press"}
+{"type": "mouse", "x": 1175, "y": 105, "button": "Button.left", "action": "release"}
+{"type": "mouse", "x": 830, "y": 730, "button": "Button.left", "action": "press"}
+{"type": "mouse", "x": 830, "y": 730, "button": "Button.left", "action": "release"}
+{"type": "mouse", "x": 930, "y": 730, "button": "Button.left", "action": "press"}
+{"type": "mouse", "x": 930, "y": 730, "button": "Button.left", "action": "release"}

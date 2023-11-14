@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Image Measurement Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        .container {
+            margin: 20px;
+        }
+
+        #imageCanvas {
+            border: 1px solid #ddd;
+            cursor: crosshair;
+        }
+
+        .controls {
+            margin: 10px;
+        }
+
+        #output {
+            margin-top: 10px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="container">
+        <canvas id="imageCanvas"></canvas>
+        <div class="controls">
+            <input type="file" id="imageLoader" name="imageLoader" />
+            <input type="number" id="scaleInput" placeholder="Enter real-world distance for scale">
+            <button onclick="startScale()">Start Scale</button>
+            <button onclick="setScale()">Set Scale</button>
+            <button onclick="calculateDistance()">Calculate Distances</button>
+            <button onclick="calculateArea()">Calculate Area</button>
+            <input type="number" id="pitchInput" placeholder="Enter predominant pitch">
+        </div>
+        <div id="output"></div>
+    </div>
+    <script>
+        let canvas = document.getElementById('imageCanvas');
+        let ctx = canvas.getContext('2d');
+        let points = [];
+        let scalePoints = []; // New array for scale line points
+        let isSettingScale = false; // New flag to indicate if we are setting the scale
+        canvas.width = 800;
+        canvas.height = 600;
+        let scale = 0;
+
+        // Load an image (You can change the source to any image you want to measure)
+        let img = new Image();
+        let imageLoader = document.getElementById('imageLoader');
+        imageLoader.addEventListener('change', handleImage, false);
+
+        function handleImage(e) {
+            let reader = new FileReader();
+            reader.onload = function (event) {
+                img.onload = function () {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height); // Draw the image to fit the canvas
+                }
+                img.src = event.target.result;
+            }
+            reader.readAsDataURL(e.target.files[0]);
+        }
+
+        function debug() {
+            console.log(scale);
+            console.log(points);
+            console.log(realWorldDistance);
+            console.log(realDistance);
+            console.log(pixelDistance);
+        }
+
+        canvas.addEventListener('click', function (event) {
+            let rect = canvas.getBoundingClientRect();
+            let x = event.clientX - rect.left;
+            let y = event.clientY - rect.top;
+            if (isSettingScale) {
+                scalePoints.push({ x: x, y: y }); // Add to scalePoints if we are setting the scale
+                if (scalePoints.length === 2) {
+                    isSettingScale = false; // Stop setting the scale if we have 2 points
+                    ctx.strokeStyle = '#00ff00'; // Set line color to green
+                    ctx.lineWidth = 3; // Set line width to 3
+                    ctx.beginPath();
+                    ctx.moveTo(scalePoints[0].x, scalePoints[0].y);
+                    ctx.lineTo(scalePoints[1].x, scalePoints[1].y);
+                    ctx.stroke();
+                    ctx.strokeStyle = '#000000'; // Reset line color to black
+                    ctx.lineWidth = 1; // Reset line width to 1
+                }
+            } else {
+                points.push({ x: x, y: y });
+                ctx.fillStyle = '#ff2626';
+                ctx.beginPath();
+                ctx.arc(x, y, 3, 0, 2 * Math.PI);
+                ctx.fill();
+                if (points.length > 1) {
+                    ctx.beginPath();
+                    ctx.moveTo(points[points.length - 2].x, points[points.length - 2].y);
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                }
+            }
+        });
+
+        function startScale() {
+            isSettingScale = true; // Start setting the scale
+            scalePoints = []; // Clear the scalePoints
+        }
+
+        function setScale() {
+            let realWorldDistance = document.getElementById('scaleInput').value;
+            if (scalePoints.length === 2 && realWorldDistance > 0) {
+                let pixelDistance = Math.sqrt(Math.pow(scalePoints[1].x - scalePoints[0].x, 2) + Math.pow(scalePoints[1].y - scalePoints[0].y, 2));
+                scale = realWorldDistance / pixelDistance;
+            }
+        }
+
+        function calculateDistance() {
+            let output = document.getElementById('output');
+            output.innerHTML = '';
+            let data = '';
+            for (let i = 1; i < points.length; i++) {
+                let pixelDistance = Math.sqrt(Math.pow(points[i].x - points[i - 1].x, 2) + Math.pow(points[i].y - points[i - 1].y, 2));
+                let realDistance = pixelDistance * scale;
+                let result = `Distance between point ${i} and ${i + 1}: ${realDistance.toFixed(2)}`;
+                output.innerHTML += `<p>${result}</p>`;
+                data += result + '\n';
+
+                // Add label to the line segment
+                let midpoint = { x: (points[i].x + points[i - 1].x) / 2, y: (points[i].y + points[i - 1].y) / 2 };
+                ctx.fillStyle = '#000000';
+                ctx.fillText(realDistance.toFixed(2), midpoint.x, midpoint.y);
+            }
+            downloadData(data, 'distances.txt');
+        }
+
+        function calculateArea() {
+            let area = 0;
+            for (let i = 0; i < points.length; i++) {
+                let j = (i + 1) % points.length;
+                area += points[i].x * points[j].y - points[j].x * points[i].y;
+            }
+            area = Math.abs(area / 2);
+            let realArea = area * scale * scale;
+
+            // Get the pitch from the input
+            let pitch = document.getElementById('pitchInput').value;
+            if (pitch > 0) {
+                // Adjust the area based on the pitch
+                realArea = realArea / Math.cos(Math.atan(pitch / 12));
+            }
+
+            let output = document.getElementById('output');
+            let result = `Area: ${realArea.toFixed(2)}`;
+            output.innerHTML += `<p>${result}</p>`;
+            downloadData(result, 'area.txt');
+
+            // Add label to the area
+            let centroid = { x: points.reduce((sum, p) => sum + p.x, 0) / points.length, y: points.reduce((sum, p) => sum + p.y, 0) / points.length };
+            ctx.fillStyle = '#000000';
+            ctx.fillText(`Area: ${realArea.toFixed(2)}`, centroid.x, centroid.y);
+        }
+
+        function downloadData(data, filename) {
+            let blob = new Blob([data], { type: 'text/plain' });
+            let url = URL.createObjectURL(blob);
+            let link = document.createElement('a');
+            link.download = filename;
+            link.href = url;
+            link.click();
+        }
+    </script>
+</body>
+
+</html>
